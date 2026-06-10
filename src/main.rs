@@ -1,6 +1,6 @@
 mod bannerfont;
 mod components;
-use components::Keyboard;
+use crate::{bannerfont::Banner, components::BannerView};
 use dioxus::prelude::*;
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -27,6 +27,6 @@ fn App() -> Element {
 #[component]
 fn Home() -> Element {
     rsx! {
-        Keyboard {}
+        BannerView { banner: Banner::try_from_code("b10ss2bri10cbo2bo15").unwrap() }
     }
 }

@@ -1,3 +1,7 @@
+:root {
+  image-rendering: crisp-edges;
+}
+
 .keyboard {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -10,5 +14,19 @@
     &:hover {
       border-color: white;
     }
+  }
+}
+
+.banner {
+  position: relative;
+  aspect-ratio: 1/2;
+
+  width: 2.5rem;
+  height: 5rem;
+
+  .banner-layer {
+    position: absolute;
+    inset: 0;
+    background-repeat: no-repeat;
   }
 }
