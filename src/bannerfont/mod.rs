@@ -1,6 +1,5 @@
 use num_enum::TryFromPrimitive;
 use std::str::FromStr;
-
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     #[error("invalid pattern code: {0}")]
@@ -79,7 +78,6 @@ impl Banner {
         Ok(Self::new(layers))
     }
 }
-
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, TryFromPrimitive)]
 pub enum Color {
