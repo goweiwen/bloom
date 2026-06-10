@@ -8,6 +8,7 @@ edition = "2021"
 
 [dependencies]
 dioxus = { version = "0.7.1", features = ["router"] }
+num_enum = "0.7.6"
 wasm-bindgen = "=0.2.118" # pin to version nixpkgs `dioxus-cli` expects
 
 [features]

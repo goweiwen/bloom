@@ -319,6 +319,7 @@ name = "bloom"
 version = "0.1.0"
 dependencies = [
  "dioxus",
+ "num_enum",
  "wasm-bindgen",
 ]
 

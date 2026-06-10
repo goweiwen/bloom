@@ -1,3 +1,6 @@
+mod bannerfont;
+mod components;
+use components::Keyboard;
 use dioxus::prelude::*;
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -24,6 +27,6 @@ fn App() -> Element {
 #[component]
 fn Home() -> Element {
     rsx! {
-        div {}
+        Keyboard {}
     }
 }
