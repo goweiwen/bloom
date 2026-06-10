@@ -320,6 +320,7 @@ version = "0.1.0"
 dependencies = [
  "dioxus",
  "num_enum",
+ "thiserror 2.0.18",
  "wasm-bindgen",
 ]
 
