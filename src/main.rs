@@ -9,8 +9,11 @@ enum Route {
     #[route("/")]
     Home {},
 }
-const FAVICON: Asset = asset!("/assets/favicon.png");
-const MAIN_CSS: Asset = asset!("/assets/main.css");
+const FAVICON: Asset = asset!("/assets/favicon.png",);
+const MAIN_CSS: Asset = asset!(
+    "/assets/main.css",
+    AssetOptions::css().with_static_head(true)
+);
 fn main() {
     dioxus::launch(App);
 }
