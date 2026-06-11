@@ -1,6 +1,7 @@
 mod bannerfont;
 mod components;
-use crate::{bannerfont::Banner, components::BannerView};
+use crate::bannerfont::{Banner, WritingDirection};
+use crate::components::Writing;
 use dioxus::prelude::*;
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -26,7 +27,14 @@ fn App() -> Element {
 /// Home page
 #[component]
 fn Home() -> Element {
+    let writing = vec![
+        Banner::try_from_code("b10").unwrap(),
+        Banner::try_from_code("b10ss2").unwrap(),
+        Banner::try_from_code("b10ss2bri10").unwrap(),
+        Banner::try_from_code("b10ss2bri10cbo2").unwrap(),
+        Banner::try_from_code("b10ss2bri10cbo2bo15").unwrap(),
+    ];
     rsx! {
-        BannerView { banner: Banner::try_from_code("b10ss2bri10cbo2bo15").unwrap() }
+        Writing { banners: writing, direction: WritingDirection::RightToLeft }
     }
 }

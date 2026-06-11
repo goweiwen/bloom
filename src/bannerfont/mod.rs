@@ -78,6 +78,7 @@ impl Banner {
         Ok(Self::new(layers))
     }
 }
+
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, TryFromPrimitive)]
 pub enum Color {
@@ -121,6 +122,7 @@ impl Color {
             Purple => (137, 50, 184),
         }
     }
+
     pub fn code(self) -> &'static str {
         use Color::*;
         match self {
@@ -313,6 +315,22 @@ impl Pattern {
             "gus" => Guster,
             _ => return Err(Error::InvalidPattern(code.to_owned())),
         })
+    }
+}
+
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum WritingDirection {
+    #[default]
+    LeftToRight,
+    RightToLeft,
+}
+
+impl WritingDirection {
+    pub fn class(self) -> &'static str {
+        match self {
+            WritingDirection::LeftToRight => "ltr",
+            WritingDirection::RightToLeft => "rtl",
+        }
     }
 }
 mod tests {

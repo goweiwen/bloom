@@ -1,5 +1,6 @@
 :root {
   image-rendering: crisp-edges;
+  font-size: calc(1 * 16px);
 }
 
 .keyboard {
@@ -28,5 +29,19 @@
     position: absolute;
     inset: 0;
     background-repeat: no-repeat;
+  }
+}
+
+.writing {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+
+  &.ltr {
+    flex-direction: row;
+  }
+
+  &.rtl {
+    flex-direction: row-reverse;
   }
 }
