@@ -2,7 +2,7 @@
   description = "bloom - A Minecraft banner composer";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     rust-overlay.url = "github:oxalica/rust-overlay";
     flake-utils.url = "github:numtide/flake-utils";
   };
@@ -20,7 +20,7 @@
         overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs { inherit system overlays; };
 
-        rust = pkgs.rust-bin.stable.latest.default.override {
+        rust = pkgs.rust-bin.nightly.latest.default.override {
           targets = [ "wasm32-unknown-unknown" ];
           extensions = [
             "rust-src"
