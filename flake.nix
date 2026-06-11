@@ -35,6 +35,7 @@
           packages = [
             rust
             pkgs.dioxus-cli
+            pkgs.binaryen
           ];
         };
       }
