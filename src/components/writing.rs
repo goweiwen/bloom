@@ -9,7 +9,9 @@ pub fn Writing(banners: Vec<Banner>, direction: Option<WritingDirection>) -> Ele
     rsx! {
         div { class: "writing {direction}",
             for banner in banners {
-                BannerView { banner: banner.clone() }
+                Tooltip { text: "Hello",
+                    BannerView { banner: banner.clone() }
+                }
             }
         }
     }

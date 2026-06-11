@@ -175,3 +175,22 @@ button.widget-button {
     flex-direction: row-reverse;
   }
 }
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+
+  .tooltip {
+    position: absolute;
+    background-color: rgba(17, 0, 17, 240);
+    color: white;
+    border: 0.125rem solid rgba(83, 0, 255, 80);
+    border-radius: 0.125rem;
+    padding: 0.125rem 0.5rem;
+    display: none;
+  }
+
+  &:hover .tooltip {
+    display: block;
+  }
+}
