@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::bannerfont::{Banner, Layer};
-const ATLAS: Asset = asset!("/assets/textures/banner_atlas.png");
+const ATLAS: Asset = asset!("/assets/textures/banner_atlas.webp");
 const ATLAS_COLS: u32 = 43;
 const ATLAS_ROWS: u32 = 16;
 const TILE_W: u32 = 20;

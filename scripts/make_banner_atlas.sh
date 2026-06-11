@@ -1,10 +1,10 @@
 #!/usr/bin/env nix-shell
-#!nix-shell --pure -i bash -p bash -p imagemagick
+#!nix-shell --pure -i bash -p bash -p imagemagick -p libwebp
 
 set -euo pipefail
 
 SRC=assets/textures/banners
-OUT=${1:-assets/textures/banner_atlas.png}
+OUT=${1:-assets/textures/banner_atlas.webp}
 W=20
 H=40
 X=1
@@ -101,6 +101,6 @@ for i in "${!colors[@]}"; do
   rows+=("$row")
 done
 
-magick "${rows[@]}" -append "$OUT"
-
+magick "${rows[@]}" -append "$tmp/atlas.png"
+cwebp -z 9 "$tmp/atlas.png" -o "$OUT"
 echo "wrote $OUT (${#colors[@]} colors x ${#files[@]} patterns, $(( ${#files[@]} * W ))x$(( ${#colors[@]} * H )))"
