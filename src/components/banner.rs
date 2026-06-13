@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::bannerfont::{Banner, Layer};
+
 const ATLAS: Asset = asset!("/assets/textures/banner_atlas.webp");
 const ATLAS_COLS: u32 = 43;
 const ATLAS_ROWS: u32 = 16;
@@ -25,29 +26,31 @@ impl From<Layer> for Sprite {
 
 #[component]
 pub fn BannerView(banner: Banner) -> Element {
-    let bg_w = ATLAS_COLS * 100;
-    let bg_h = ATLAS_ROWS * 100;
-    let layers: Vec<(f64, f64)> = banner
-        .layers
-        .iter()
-        .map(|layer| Sprite::from(*layer))
-        .map(|s| {
-            let col = (s.x / TILE_W) as f64;
-            let row = (s.y / TILE_H) as f64;
-            (
-                col * 100.0 / (ATLAS_COLS - 1) as f64,
-                row * 100.0 / (ATLAS_ROWS - 1) as f64,
-            )
-        })
-        .collect();
     rsx! {
         div { class: "banner",
-            for (px, py) in layers {
-                div {
-                    class: "banner-layer",
-                    style: "background-image: url({ATLAS}); background-size: {bg_w}% {bg_h}%; background-position: {px}% {py}%;",
-                }
+            for layer in banner.layers {
+                BannerLayer { layer }
             }
+        }
+    }
+}
+
+#[component]
+pub fn BannerLayer(layer: Layer) -> Element {
+    let sprite = Sprite::from(layer);
+
+    let bg_w = ATLAS_COLS * 100;
+    let bg_h = ATLAS_ROWS * 100;
+
+    let col = (sprite.x / TILE_W) as f64;
+    let px = col * 100.0 / (ATLAS_COLS - 1) as f64;
+    let row = (sprite.y / TILE_H) as f64;
+    let py = row * 100.0 / (ATLAS_ROWS - 1) as f64;
+
+    rsx! {
+        div {
+            class: "banner-layer",
+            style: "background-image: url({ATLAS}); background-size: {bg_w}% {bg_h}%; background-position: {px}% {py}%;",
         }
     }
 }

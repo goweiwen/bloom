@@ -58,33 +58,57 @@ button.widget-button {
 }
 
 .keyboard {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
 
-  button.color {
-    aspect-ratio: 1;
+  .colors {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    justify-content: start;
+    align-items: start;
+  }
+
+  .patterns {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    justify-content: start;
+    align-items: start;
+  }
+
+  button {
+    width: calc(var(--ui-scale) * 20px);
+    position: relative;
     display: flex;
     padding: 0;
     border: calc(var(--ui-scale) * 1px) solid black;
 
-    position: relative;
-
-    div {
-      position: absolute;
-      inset: 0;
-    }
-
-    .bg {
-      background-color: var(--color);
-      background-repeat: no-repeat;
-      background-size: calc(var(--ui-scale) * 16px);
-      background-position: center;
-      background-blend-mode: difference;
-      flex: 1;
-    }
-
     &:hover {
       border-color: white;
+    }
+
+    &.color {
+      aspect-ratio: 1;
+
+      div {
+        position: absolute;
+        inset: 0;
+      }
+
+      .bg {
+        background-color: var(--color);
+        background-repeat: no-repeat;
+        background-size: calc(var(--ui-scale) * 16px);
+        background-position: center;
+        background-blend-mode: difference;
+        flex: 1;
+      }
+    }
+
+    &.pattern {
+      background-color: var(--bg-color);
+      aspect-ratio: 1/2;
     }
   }
 }
@@ -95,12 +119,12 @@ button.widget-button {
 
   width: 2.5rem;
   height: 5rem;
+}
 
-  .banner-layer {
-    position: absolute;
-    inset: 0;
-    background-repeat: no-repeat;
-  }
+.banner-layer {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
 }
 
 .writing {

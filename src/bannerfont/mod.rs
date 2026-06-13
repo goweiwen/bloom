@@ -1,5 +1,6 @@
 use num_enum::TryFromPrimitive;
-use std::str::FromStr;
+use strum_macros::{EnumCount, EnumIter};
+
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     #[error("invalid pattern code: {0}")]
@@ -80,7 +81,7 @@ impl Banner {
 }
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, TryFromPrimitive)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, TryFromPrimitive, EnumCount, EnumIter)]
 pub enum Color {
     White = 0,
     LightGray,
@@ -170,7 +171,7 @@ impl Color {
 }
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, TryFromPrimitive)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, TryFromPrimitive, EnumCount, EnumIter)]
 pub enum Pattern {
     Base = 0,
     Border,

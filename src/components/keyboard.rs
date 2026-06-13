@@ -1,19 +1,23 @@
 use crate::bannerfont::{Color, Layer, Pattern};
 use crate::components::BannerLayer;
 
-use crate::bannerfont::Color;
 use dioxus::prelude::*;
+use strum::IntoEnumIterator;
+
 #[component]
 pub fn Keyboard() -> Element {
+    let color = use_signal(|| Color::White);
     rsx! {
-        div { class: "keyboard", Colors {} }
+        div { class: "keyboard",
+            Colors { color }
+            Patterns { color }
+        }
     }
 }
 
 #[component]
-fn Colors() -> Element {
-    fn style(i: u8) -> String {
-        let color = Color::try_from(i).unwrap();
+fn Colors(color: WriteSignal<Color>) -> Element {
+    fn style(color: Color) -> String {
         let color = color.rgb();
         format!(
             "background-image: var(--icon-dye); --color: rgb({}, {}, {})",
@@ -21,10 +25,117 @@ fn Colors() -> Element {
         )
     }
     rsx! {
-        for i in (0..16) {
-            button { class: "color",
-                div { class: "bg", style: style(i) }
+        div { class: "colors",
+            for c in Color::iter() {
+                button {
+                    class: "color",
+                    onclick: move |_| {
+                        color.set(c);
+                    },
+                    div { class: "bg", style: style(c) }
+                }
             }
         }
+    }
+}
+
+#[component]
+fn Patterns(color: ReadSignal<Color>) -> Element {
+    let color = color.read().to_owned();
+    let bg_color = bg_color_rgb(color);
+    let layout = keyboard_layout();
+    rsx! {
+        div { class: "patterns",
+            for (y, row) in layout.iter().enumerate() {
+                for (x, (key, pattern)) in row.iter().enumerate() {
+                    button {
+                        class: "pattern",
+                        style: "grid-column: {x+1}; grid-row: {y+1}; --bg-color: rgb({bg_color.0}, {bg_color.1}, {bg_color.2})",
+                        BannerLayer { layer: Layer::new(*pattern, color) }
+                    }
+                }
+            }
+        }
+    }
+}
+
+fn bg_color_rgb(color: Color) -> (u8, u8, u8) {
+    use Color::*;
+    match color {
+        White | LightGray | Yellow | Orange | Lime | LightBlue | Cyan | Pink | Magenta => {
+            (71, 79, 82)
+        }
+        Gray | Red | Brown | Green | Blue | Purple | Black => (157, 157, 151),
+    }
+}
+
+fn keyboard_layout() -> Vec<Vec<(char, Pattern)>> {
+    use Pattern::*;
+    vec![
+        vec![
+            ('q', SmallStripes),
+            ('Q', Bricks),
+            ('w', Border),
+            ('W', CurlyBorder),
+            ('e', HalfHorizontal),
+            ('E', HalfHorizontalBottom),
+            ('r', StripeTop),
+            ('R', StripeBottom),
+            ('t', StripeCenter),
+            ('T', StripeMiddle),
+            ('y', Gradient),
+            ('Y', GradientUp),
+        ],
+        vec![
+            ('a', TrianglesTop),
+            ('A', TrianglesBottom),
+            ('s', TriangleTop),
+            ('S', TriangleBottom),
+            ('d', StraightCross),
+            ('D', Cross),
+            ('f', SquareTopLeft),
+            ('F', SquareTopRight),
+            ('g', DiagonalLeft),
+            ('G', DiagonalRight),
+        ],
+        vec![
+            ('z', HalfVertical),
+            ('Z', HalfVerticalRight),
+            ('x', StripeLeft),
+            ('X', StripeRight),
+            ('c', StripeDownLeft),
+            ('C', StripeDownRight),
+            ('v', SquareBottomLeft),
+            ('V', SquareBottomRight),
+            ('b', DiagonalUpLeft),
+            ('B', DiagonalUpRight),
+        ],
+        vec![
+            ('1', Creeper),
+            ('2', Skull),
+            ('3', Flower),
+            ('4', Globe),
+            ('5', Piglin),
+            ('6', Mojang),
+            ('7', Circle),
+            ('8', Rhombus),
+            ('9', Flow),
+            ('0', Guster),
+        ],
+    ]
+}
+
+#[test]
+fn test_all_patterns_in_keyboard() {
+    let keys: Vec<_> = keyboard_layout().into_iter().flatten().collect();
+    for pattern in Pattern::iter() {
+        if pattern == Pattern::Base {
+            continue;
+        }
+        assert!(
+            keys.iter().any(|&p| p.1 == pattern),
+            "Pattern {:?} is not in the keyboard layout",
+            pattern,
+        );
     }
 }
