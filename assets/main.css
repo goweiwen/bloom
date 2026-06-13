@@ -25,17 +25,36 @@ body {
   border-image-width: calc(var(--ui-scale) * 4px);
 }
 
+button.widget-button {
+  font-size: 1rem;
+  padding: 0.25rem;
+  color: white;
+  background: black;
+  border-image-slice: 4 fill;
+  border-image-repeat: repeat;
+  border-image-width: calc(var(--ui-scale) * 4px);
+
+  &:hover {
+    background: white;
+  }
+}
+
 .keyboard {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 
   button {
-    background-color: var(--color);
-    border: 2px solid black;
     aspect-ratio: 1;
+    display: flex;
+    padding: 0;
 
-    &:hover {
-      border-color: white;
+    div {
+      background-color: var(--color);
+      flex: 1;
+
+      &:hover {
+        border-color: white;
+      }
     }
   }
 }

@@ -19,7 +19,9 @@ fn Colors() -> Element {
     }
     rsx! {
         for i in (0..16) {
-            button { class: "color", style: style(i) }
+            button { class: "color",
+                div { style: style(i) }
+            }
         }
     }
 }

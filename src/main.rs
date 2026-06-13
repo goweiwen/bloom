@@ -1,7 +1,7 @@
 mod bannerfont;
 mod components;
 use crate::bannerfont::{Banner, WritingDirection};
-use crate::components::Writing;
+use crate::components::{Keyboard, Writing};
 use dioxus::prelude::*;
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -17,6 +17,7 @@ const MAIN_CSS: Asset = asset!(
 const FONT: Asset = asset!("/assets/fonts/Minecraftia.woff");
 const APP_BG: Asset = asset!("/assets/ui/app_bg.png");
 const GUI_BG: Asset = asset!("/assets/ui/gui_bg.png");
+const BUTTON: Asset = asset!("/assets/ui/button.png");
 fn main() {
     dioxus::launch(App);
 }
@@ -30,6 +31,7 @@ fn App() -> Element {
 @font-face {{ font-family: 'Minecraftia'; font-style: normal; font-weight: 400; src: url('{FONT}') format('woff'); }}
 body {{ background-image: url('{APP_BG}'); }}
 #app {{ border-image-source: url('{GUI_BG}'); }}
+button:not(.color) {{ border-image-source: url('{BUTTON}'); }}
             "# }
         div { id: "app", Router::<Route> {} }
     }
@@ -47,5 +49,7 @@ fn Home() -> Element {
     ];
     rsx! {
         Writing { banners: writing, direction: WritingDirection::RightToLeft }
+        button { class: "widget-button", "test" }
+        Keyboard {}
     }
 }
