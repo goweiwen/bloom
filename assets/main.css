@@ -3,6 +3,10 @@
   font-size: calc(1 * 16px);
 }
 
+* {
+  font-family: Minecraftia;
+}
+
 .keyboard {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
