@@ -11,6 +11,18 @@
 body {
   background-size: calc(var(--ui-scale) * 16px);
   background-repeat: repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#app {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-image-slice: 4 fill;
+  border-image-repeat: stretch;
+  border-image-width: calc(var(--ui-scale) * 4px);
 }
 
 .keyboard {
