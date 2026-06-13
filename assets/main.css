@@ -9,6 +9,7 @@
 }
 
 body {
+  background-image: var(--app-bg);
   background-size: calc(var(--ui-scale) * 16px);
   background-repeat: repeat;
   display: flex;
@@ -17,6 +18,7 @@ body {
 }
 
 #app {
+  border-image-source: var(--gui-bg);
   display: inline-flex;
   flex-direction: column;
   padding: 1rem;
@@ -30,6 +32,7 @@ button.widget-button {
   padding: 0.25rem;
   color: white;
   background: black;
+  border-image-source: var(--button-bg);
   border-image-slice: 4 fill;
   border-image-repeat: repeat;
   border-image-width: calc(var(--ui-scale) * 4px);

@@ -29,9 +29,11 @@ fn App() -> Element {
         document::Link { rel: "stylesheet", href: MAIN_CSS }
         style { dangerous_inner_html: r#"
 @font-face {{ font-family: 'Minecraftia'; font-style: normal; font-weight: 400; src: url('{FONT}') format('woff'); }}
-body {{ background-image: url('{APP_BG}'); }}
-#app {{ border-image-source: url('{GUI_BG}'); }}
-button:not(.color) {{ border-image-source: url('{BUTTON}'); }}
+:root {{
+    --app-bg: url('{APP_BG}');
+    --gui-bg: url('{GUI_BG}');
+    --button-bg: url('{BUTTON}');
+}}
             "# }
         div { id: "app", Router::<Route> {} }
     }
