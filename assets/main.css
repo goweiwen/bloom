@@ -1,6 +1,7 @@
 :root {
+  --ui-scale: 2;
   image-rendering: crisp-edges;
-  font-size: calc(1 * 16px);
+  font-size: calc(var(--ui-scale) * 8px);
 }
 
 * {
