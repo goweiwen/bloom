@@ -10,6 +10,7 @@ pub fn Keyboard() -> Element {
     rsx! {
         div { class: "keyboard",
             Colors { color }
+            NewBanner { color }
             Patterns { color }
         }
     }
@@ -29,13 +30,25 @@ fn Colors(color: WriteSignal<Color>) -> Element {
             for c in Color::iter() {
                 button {
                     class: "color",
+                    style: style(c),
                     onclick: move |_| {
                         color.set(c);
                     },
-                    div { class: "bg", style: style(c) }
                 }
             }
         }
+    }
+}
+
+#[component]
+fn NewBanner(color: ReadSignal<Color>) -> Element {
+    let color = color.read().rgb();
+    let style = format!(
+        "background-image: var(--icon-banner); --color: rgb({}, {}, {})",
+        color.0, color.1, color.2,
+    );
+    rsx! {
+        button { class: "new-banner", style }
     }
 }
 

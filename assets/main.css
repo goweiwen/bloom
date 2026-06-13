@@ -58,19 +58,28 @@ button.widget-button {
 }
 
 .keyboard {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  align-items: start;
+  display: grid;
+  grid-template-columns: repeat(12, calc(var(--ui-scale) * 22px));
 
   .colors {
+    grid-column: 1 / span 8;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     justify-content: start;
     align-items: start;
   }
 
+  .new-banner {
+    grid-column: 9 / span 2;
+    background-color: var(--color);
+    background-repeat: no-repeat;
+    background-size: calc(var(--ui-scale) * 16px);
+    background-position: center;
+    background-blend-mode: difference;
+  }
+
   .patterns {
+    grid-column: 1 / span 12;
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     justify-content: start;
@@ -78,11 +87,18 @@ button.widget-button {
   }
 
   button {
-    width: calc(var(--ui-scale) * 20px);
     position: relative;
     display: flex;
     padding: 0;
+
     border: calc(var(--ui-scale) * 1px) solid black;
+    box-sizing: content-box;
+
+    background-color: var(--color);
+    background-repeat: no-repeat;
+    background-size: calc(var(--ui-scale) * 16px);
+    background-position: center;
+    background-blend-mode: difference;
 
     &:hover {
       border-color: white;
@@ -96,14 +112,6 @@ button.widget-button {
         inset: 0;
       }
 
-      .bg {
-        background-color: var(--color);
-        background-repeat: no-repeat;
-        background-size: calc(var(--ui-scale) * 16px);
-        background-position: center;
-        background-blend-mode: difference;
-        flex: 1;
-      }
     }
 
     &.pattern {
@@ -116,6 +124,7 @@ button.widget-button {
 .banner {
   position: relative;
   aspect-ratio: 1/2;
+  flex-shrink: 0;
 
   width: 2.5rem;
   height: 5rem;
