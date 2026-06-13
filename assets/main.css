@@ -8,6 +8,11 @@
   font-family: Minecraftia;
 }
 
+body {
+  background-size: calc(var(--ui-scale) * 16px);
+  background-repeat: repeat;
+}
+
 .keyboard {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

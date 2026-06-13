@@ -15,6 +15,7 @@ const MAIN_CSS: Asset = asset!(
     AssetOptions::css().with_static_head(true)
 );
 const FONT: Asset = asset!("/assets/fonts/Minecraftia.woff");
+const APP_BG: Asset = asset!("/assets/ui/app_bg.png");
 fn main() {
     dioxus::launch(App);
 }
@@ -26,6 +27,7 @@ fn App() -> Element {
         document::Link { rel: "stylesheet", href: MAIN_CSS }
         style { dangerous_inner_html: r#"
 @font-face {{ font-family: 'Minecraftia'; font-style: normal; font-weight: 400; src: url('{FONT}') format('woff'); }}
+body {{ background-image: url('{APP_BG}'); }}
             "# }
         Router::<Route> {}
     }
