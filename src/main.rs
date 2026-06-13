@@ -18,6 +18,8 @@ const FONT: Asset = asset!("/assets/fonts/Minecraftia.woff");
 const APP_BG: Asset = asset!("/assets/ui/app_bg.png");
 const GUI_BG: Asset = asset!("/assets/ui/gui_bg.png");
 const BUTTON: Asset = asset!("/assets/ui/button.png");
+const ICON_BANNER: Asset = asset!("/assets/ui/icon_banner.png");
+const ICON_DYE: Asset = asset!("/assets/ui/icon_dye.png");
 fn main() {
     dioxus::launch(App);
 }
@@ -33,6 +35,8 @@ fn App() -> Element {
     --app-bg: url('{APP_BG}');
     --gui-bg: url('{GUI_BG}');
     --button-bg: url('{BUTTON}');
+    --icon-banner: url('{ICON_BANNER}');
+    --icon-dye: url('{ICON_DYE}');
 }}
             "# }
         div { id: "app", Router::<Route> {} }

@@ -42,22 +42,49 @@ button.widget-button {
   }
 }
 
+.icon {
+  background-size: calc(var(--ui-scale) * 16px);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-blend-mode: darken;
+
+  &.icon-banner {
+    background-image: var(--icon-banner);
+  }
+
+  &.icon-dye {
+    background-image: var(--icon-dye);
+  }
+}
+
 .keyboard {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 
-  button {
+  button.color {
     aspect-ratio: 1;
     display: flex;
     padding: 0;
+    border: calc(var(--ui-scale) * 1px) solid black;
+
+    position: relative;
 
     div {
-      background-color: var(--color);
-      flex: 1;
+      position: absolute;
+      inset: 0;
+    }
 
-      &:hover {
-        border-color: white;
-      }
+    .bg {
+      background-color: var(--color);
+      background-repeat: no-repeat;
+      background-size: calc(var(--ui-scale) * 16px);
+      background-position: center;
+      background-blend-mode: difference;
+      flex: 1;
+    }
+
+    &:hover {
+      border-color: white;
     }
   }
 }

@@ -15,12 +15,15 @@ fn Colors() -> Element {
     fn style(i: u8) -> String {
         let color = Color::try_from(i).unwrap();
         let color = color.rgb();
-        format!("--color: rgb({}, {}, {})", color.0, color.1, color.2)
+        format!(
+            "background-image: var(--icon-dye); --color: rgb({}, {}, {})",
+            color.0, color.1, color.2,
+        )
     }
     rsx! {
         for i in (0..16) {
             button { class: "color",
-                div { style: style(i) }
+                div { class: "bg", style: style(i) }
             }
         }
     }
