@@ -1,5 +1,5 @@
-use crate::bannerfont::{Color, Layer, Pattern};
-use crate::components::{BannerLayer, Tooltip};
+use crate::bannerfont::{Banner, Color, Layer, Pattern};
+use crate::components::{BannerView, Tooltip};
 use crate::sound::Sound;
 
 use dioxus::prelude::*;
@@ -78,7 +78,7 @@ fn Patterns(color: ReadSignal<Color>) -> Element {
                         button {
                             class: "pattern",
                             onmousedown: move |_| Sound::SelectPattern.play(),
-                            BannerLayer { layer: Layer::new(*pattern, color) }
+                            BannerView { banner: Banner::new(vec![Layer::new(*pattern, color)]) }
                         }
                     }
                 }

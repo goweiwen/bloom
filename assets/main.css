@@ -146,23 +146,21 @@ button.widget-button {
     &.pattern {
       background-color: var(--bg-color);
       aspect-ratio: 1/2;
+
+      .banner {
+        width: 100%;
+        height: 100%;
+      }
     }
   }
 }
 
 .banner {
-  position: relative;
   aspect-ratio: 1/2;
   flex-shrink: 0;
 
   width: 2.5rem;
   height: 5rem;
-}
-
-.banner-layer {
-  position: absolute;
-  inset: 0;
-  background-repeat: no-repeat;
 }
 
 .writing {
