@@ -1,6 +1,12 @@
 use dioxus::prelude::*;
 use web_sys::HtmlAudioElement;
 
+use crate::state::Settings;
+
+/// The sounds are loud, so a full (100%) volume setting maps to this fraction
+/// of the browser's maximum.
+const MAX_VOLUME: f64 = 0.4;
+
 const CLICK: Asset = asset!("/assets/sounds/click.ogg");
 const SELECT_PATTERN: [Asset; 5] = [
     asset!("/assets/sounds/select_pattern1.ogg"),
@@ -40,7 +46,7 @@ impl Sound {
 
 fn play(url: &str) {
     if let Ok(audio) = HtmlAudioElement::new_with_src(url) {
-        audio.set_volume(0.25);
+        audio.set_volume((volume() * MAX_VOLUME).clamp(0.0, 1.0));
         let _ = audio.play();
     }
 }

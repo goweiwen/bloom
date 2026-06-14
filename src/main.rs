@@ -1,9 +1,11 @@
 mod bannerfont;
 mod components;
 mod sound;
+mod state;
 
 use crate::bannerfont::{Banner, WritingDirection};
-use crate::components::{Keyboard, WidgetButton, WidgetSlider, Writing};
+use crate::components::{Keyboard, Settings, Writing};
+use crate::state::Settings as SettingsState;
 use dioxus::prelude::*;
 
 #[derive(Debug, Clone, Routable, PartialEq)]
@@ -69,33 +71,17 @@ fn Home() -> Element {
         Banner::try_from_code("b10ss2bri10cbo2").unwrap(),
         Banner::try_from_code("b10ss2bri10cbo2bo15").unwrap(),
     ];
-    let mut volume = use_signal(|| 0.5);
     rsx! {
         NavBar {}
         main { id: "app",
-            Writing { banners: writing, direction: WritingDirection::RightToLeft }
-            WidgetButton { "test" }
-            WidgetSlider {
-                value: volume(),
-                label: format!("Volume: {}%", (volume() * 100.0).round() as i32),
-                oninput: move |v| volume.set(v),
-            }
+            Writing { banners: writing, direction: (settings.banner_direction)() }
             Keyboard {}
         }
     }
 }
 
-/// Settings
 #[component]
-fn Settings() -> Element {
-    rsx! {
-        NavBar {}
-        main { id: "app" }
-    }
-}
-
-#[component]
-fn NavBar() -> Element {
+pub(crate) fn NavBar() -> Element {
     let link = |route, name| {
         rsx! {
             Link { to: route, active_class: "active", {name} }
