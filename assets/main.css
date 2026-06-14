@@ -54,6 +54,7 @@ body {
 }
 
 button.widget-button {
+  height: calc(var(--ui-scale) * 20px);
   font-size: 1rem;
   padding: 0.25rem;
   color: white;
@@ -65,6 +66,59 @@ button.widget-button {
 
   &:hover {
     background: white;
+  }
+}
+
+.widget-slider {
+  position: relative;
+  display: flex;
+  height: calc(var(--ui-scale) * 20px);
+  font-size: 1rem;
+  color: white;
+  background: black;
+  border-image-source: var(--button-disabled-bg);
+  border-image-slice: 4 fill;
+  border-image-repeat: repeat;
+  border-image-width: calc(var(--ui-scale) * 4px);
+
+  input,
+  label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  input {
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  label {
+    pointer-events: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    border: calc(var(--ui-scale) * 1px) solid black;
+    border-radius: 0;
+    height: calc(var(--ui-scale) * 18px);
+    width: calc(var(--ui-scale) * 6px);
+    background-image: var(--slider);
+    background-size: calc(var(--ui-scale) * 8px);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    appearance: none;
+    border: calc(var(--ui-scale) * 1px) solid black;
+    border-radius: 0;
+    height: calc(var(--ui-scale) * 18px);
+    width: calc(var(--ui-scale) * 6px);
+    background-image: var(--slider);
+    background-size: calc(var(--ui-scale) * 8px);
   }
 }
 
