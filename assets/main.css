@@ -186,14 +186,16 @@ button.widget-button {
     left: var(--mouse-x, 0);
     top: var(--mouse-y, 0);
     transform: translate(1rem, calc(-100%));
-    background-color: rgba(17, 0, 17, 240);
     color: white;
-    border: 0.125rem solid rgba(83, 0, 255, 80);
-    border-radius: 0.125rem;
-    padding: 0.125rem 0.5rem;
+    padding: 0.125rem 0.5rem 0.375rem 0.5rem;
     pointer-events: none;
     white-space: nowrap;
     display: none;
+    border-image-source: var(--tooltip);
+    border-image-slice: 4 fill;
+    border-image-repeat: stretch;
+    border-image-width: calc(var(--ui-scale) * 4px);
+    text-shadow: 0.125rem 0.125rem 0 #404040;
   }
 
   &:hover .tooltip {

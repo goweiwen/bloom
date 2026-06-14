@@ -27,11 +27,11 @@ const ICON_BANNER: Asset = asset!("/assets/ui/icon_banner.png");
 const ICON_DYE: Asset = asset!("/assets/ui/icon_dye.png");
 const TAB_ACTIVE: Asset = asset!("/assets/ui/tab_active.png");
 const TAB_INACTIVE: Asset = asset!("/assets/ui/tab_inactive.png");
+const TOOLTIP: Asset = asset!("/assets/ui/tooltip.png");
 
 fn main() {
     dioxus::launch(App);
 }
-
 #[component]
 fn App() -> Element {
     rsx! {
@@ -47,6 +47,7 @@ fn App() -> Element {
     --icon-dye: url('{ICON_DYE}');
     --tab-active: url('{TAB_ACTIVE}');
     --tab-inactive: url('{TAB_INACTIVE}');
+    --tooltip: url('{TOOLTIP}');
 }}
             "# }
         Router::<Route> {}
