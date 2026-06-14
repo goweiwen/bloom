@@ -1,5 +1,6 @@
 use crate::bannerfont::{Color, Layer, Pattern};
 use crate::components::{BannerLayer, Tooltip};
+use crate::sound::Sound;
 
 use dioxus::prelude::*;
 use strum::IntoEnumIterator;
@@ -32,7 +33,7 @@ fn Colors(color: WriteSignal<Color>) -> Element {
                     button {
                         class: "color",
                         style: style(c),
-                        onmousedown: move |_| crate::sound::play_select_pattern(),
+                        onmousedown: move |_| Sound::SelectPattern.play(),
                         onclick: move |_| color.set(c),
                     }
                 }
@@ -56,7 +57,7 @@ fn NewBanner(color: ReadSignal<Color>) -> Element {
             button {
                 class: "new-banner",
                 style,
-                onmousedown: move |_| crate::sound::play_select_pattern(),
+                onmousedown: move |_| Sound::TakeResult.play(),
             }
         }
     }
@@ -76,7 +77,7 @@ fn Patterns(color: ReadSignal<Color>) -> Element {
                         style: "grid-column: {x+1}; grid-row: {y+1}; --bg-color: rgb({bg_color.0}, {bg_color.1}, {bg_color.2})",
                         button {
                             class: "pattern",
-                            onmousedown: move |_| crate::sound::play_select_pattern(),
+                            onmousedown: move |_| Sound::SelectPattern.play(),
                             BannerLayer { layer: Layer::new(*pattern, color) }
                         }
                     }
