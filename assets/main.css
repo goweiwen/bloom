@@ -182,11 +182,17 @@ button.widget-button {
 
   .tooltip {
     position: absolute;
+    z-index: 1;
+    left: var(--mouse-x, 0);
+    top: var(--mouse-y, 0);
+    transform: translate(1rem, calc(-100%));
     background-color: rgba(17, 0, 17, 240);
     color: white;
     border: 0.125rem solid rgba(83, 0, 255, 80);
     border-radius: 0.125rem;
     padding: 0.125rem 0.5rem;
+    pointer-events: none;
+    white-space: nowrap;
     display: none;
   }
 
