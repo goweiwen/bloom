@@ -1,9 +1,10 @@
 mod bannerfont;
 mod components;
+mod db;
 mod sound;
 mod state;
 
-use crate::bannerfont::{Banner, WritingDirection};
+use crate::bannerfont::Banner;
 use crate::components::{Keyboard, Settings, Writing};
 use crate::state::Settings as SettingsState;
 use dioxus::prelude::*;
@@ -39,6 +40,8 @@ fn main() {
 }
 #[component]
 fn App() -> Element {
+    let settings = use_context_provider(SettingsState::new);
+    use_hook(move || settings.load());
     rsx! {
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
@@ -64,6 +67,7 @@ fn App() -> Element {
 /// Home page
 #[component]
 fn Home() -> Element {
+    let settings = use_context::<SettingsState>();
     let writing = vec![
         Banner::try_from_code("b10").unwrap(),
         Banner::try_from_code("b10ss2").unwrap(),

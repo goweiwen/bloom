@@ -45,6 +45,7 @@ impl Sound {
 }
 
 fn play(url: &str) {
+    let volume = consume_context::<Settings>().volume;
     if let Ok(audio) = HtmlAudioElement::new_with_src(url) {
         audio.set_volume((volume() * MAX_VOLUME).clamp(0.0, 1.0));
         let _ = audio.play();

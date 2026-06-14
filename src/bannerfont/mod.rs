@@ -83,7 +83,9 @@ impl Banner {
     }
 }
 
-#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(
+    Default, Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize,
+)]
 pub enum WritingDirection {
     #[default]
     LeftToRight,

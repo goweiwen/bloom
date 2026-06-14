@@ -29,11 +29,7 @@ impl Settings {
                 return;
             };
             if let Ok(Some(settings)) = db::load_settings(&db).await {
-                self.banner_direction.set(if settings.rtl {
-                    WritingDirection::RightToLeft
-                } else {
-                    WritingDirection::LeftToRight
-                });
+                self.banner_direction.set(settings.banner_direction);
                 self.volume.set(settings.volume);
             }
         });
@@ -42,7 +38,7 @@ impl Settings {
     /// Persist the current settings to IndexedDB, fire-and-forget.
     pub fn save(self) {
         let settings = db::Settings {
-            rtl: (self.banner_direction)() == WritingDirection::RightToLeft,
+            banner_direction: (self.banner_direction)(),
             volume: (self.volume)(),
         };
         spawn(async move {
