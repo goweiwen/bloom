@@ -96,7 +96,6 @@ button.widget-button {
   }
 
   .new-banner {
-    grid-column: 9 / span 2;
     background-color: var(--color);
     background-repeat: no-repeat;
     background-size: calc(var(--ui-scale) * 16px);
@@ -110,6 +109,10 @@ button.widget-button {
     grid-template-columns: repeat(12, 1fr);
     justify-content: start;
     align-items: start;
+  }
+
+  .tooltip-container {
+    display: grid;
   }
 
   button {

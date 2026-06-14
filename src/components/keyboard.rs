@@ -1,5 +1,5 @@
 use crate::bannerfont::{Color, Layer, Pattern};
-use crate::components::BannerLayer;
+use crate::components::{BannerLayer, Tooltip};
 
 use dioxus::prelude::*;
 use strum::IntoEnumIterator;
@@ -28,12 +28,14 @@ fn Colors(color: WriteSignal<Color>) -> Element {
     rsx! {
         div { class: "colors",
             for c in Color::iter() {
-                button {
-                    class: "color",
-                    style: style(c),
-                    onclick: move |_| {
-                        color.set(c);
-                    },
+                Tooltip { text: c.name(),
+                    button {
+                        class: "color",
+                        style: style(c),
+                        onclick: move |_| {
+                            color.set(c);
+                        },
+                    }
                 }
             }
         }
@@ -42,13 +44,16 @@ fn Colors(color: WriteSignal<Color>) -> Element {
 
 #[component]
 fn NewBanner(color: ReadSignal<Color>) -> Element {
-    let color = color.read().rgb();
+    let color = color.read().to_owned();
+    let rgb = color.rgb();
     let style = format!(
         "background-image: var(--icon-banner); --color: rgb({}, {}, {})",
-        color.0, color.1, color.2,
+        rgb.0, rgb.1, rgb.2,
     );
     rsx! {
-        button { class: "new-banner", style }
+        Tooltip { text: format!("New {} Banner", color.name()), style: "grid-column: 9 / span 2",
+            button { class: "new-banner", style }
+        }
     }
 }
 
@@ -61,10 +66,13 @@ fn Patterns(color: ReadSignal<Color>) -> Element {
         div { class: "patterns",
             for (y, row) in layout.iter().enumerate() {
                 for (x, (key, pattern)) in row.iter().enumerate() {
-                    button {
-                        class: "pattern",
+                    Tooltip {
+                        text: pattern.name(),
                         style: "grid-column: {x+1}; grid-row: {y+1}; --bg-color: rgb({bg_color.0}, {bg_color.1}, {bg_color.2})",
-                        BannerLayer { layer: Layer::new(*pattern, color) }
+                        button {
+                            class: "pattern",
+                            BannerLayer { layer: Layer::new(*pattern, color) }
+                        }
                     }
                 }
             }

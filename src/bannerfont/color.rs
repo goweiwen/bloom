@@ -47,6 +47,28 @@ impl Color {
         }
     }
 
+    pub fn name(self) -> &'static str {
+        use Color::*;
+        match self {
+            White => "White",
+            LightGray => "Light Gray",
+            Gray => "Gray",
+            Black => "Black",
+            Yellow => "Yellow",
+            Orange => "Orange",
+            Red => "Red",
+            Brown => "Brown",
+            Lime => "Lime",
+            Green => "Green",
+            LightBlue => "Light Blue",
+            Cyan => "Cyan",
+            Blue => "Blue",
+            Pink => "Pink",
+            Magenta => "Magenta",
+            Purple => "Purple",
+        }
+    }
+
     pub fn code(self) -> &'static str {
         use Color::*;
         match self {

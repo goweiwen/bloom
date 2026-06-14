@@ -52,6 +52,55 @@ pub enum Pattern {
 }
 
 impl Pattern {
+    pub fn name(self) -> &'static str {
+        use Pattern::*;
+        match self {
+            Base => "Base",
+            Border => "Bordure",
+            Bricks => "Field Masoned",
+            Circle => "Roundel",
+            Creeper => "Creeper Charge",
+            Cross => "Saltire",
+            CurlyBorder => "Bordure Indented",
+            DiagonalLeft => "Per Bend Sinister",
+            DiagonalUpRight => "Per Bend Sinister Inverted",
+            DiagonalUpLeft => "Per Bend Inverted",
+            DiagonalRight => "Per Bend",
+            Flower => "Flower Charge",
+            Globe => "Globe",
+            Gradient => "Gradient",
+            GradientUp => "Base Gradient",
+            HalfHorizontal => "Per Fess",
+            HalfHorizontalBottom => "Per Fess Inverted",
+            HalfVertical => "Per Pale",
+            HalfVerticalRight => "Per Pale Inverted",
+            Mojang => "Thing",
+            Piglin => "Snout",
+            Rhombus => "Lozenge",
+            Skull => "Skull Charge",
+            SmallStripes => "Paly",
+            SquareBottomLeft => "Base Dexter Canton",
+            SquareBottomRight => "Base Sinister Canton",
+            SquareTopLeft => "Chief Dexter Canton",
+            SquareTopRight => "Chief Sinister Canton",
+            StraightCross => "Cross",
+            StripeBottom => "Base",
+            StripeCenter => "Pale",
+            StripeDownLeft => "Bend Sinister",
+            StripeDownRight => "Bend",
+            StripeLeft => "Pale Dexter",
+            StripeMiddle => "Fess",
+            StripeRight => "Pale Sinister",
+            StripeTop => "Chief",
+            TriangleBottom => "Chevron",
+            TriangleTop => "Inverted Chevron",
+            TrianglesBottom => "Base Indented",
+            TrianglesTop => "Chief Indented",
+            Flow => "Flow",
+            Guster => "Guster",
+        }
+    }
+
     pub fn code(self) -> &'static str {
         use Pattern::*;
         match self {
