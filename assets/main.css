@@ -1,7 +1,8 @@
 :root {
-  --ui-scale: 2;
+  --ui-scale: 4;
   image-rendering: crisp-edges;
   font-size: calc(var(--ui-scale) * 8px);
+  color: #404040;
 }
 
 * {
@@ -17,11 +18,36 @@ body {
   justify-content: center;
 }
 
+#nav {
+  display: flex;
+  margin-top: 0.5rem;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+
+    padding: 0.5rem 0.75rem 0.75rem 0.75rem;
+    margin-bottom: -0.5rem;
+    border-image-source: var(--tab-inactive);
+    border-image-slice: 4 fill;
+    border-image-repeat: stretch;
+    border-image-width: calc(var(--ui-scale) * 4px);
+
+    &.active {
+      z-index: 1;
+      border-image-source: var(--tab-active);
+      margin-top: -0.25rem;
+      padding-top: 0.5rem;
+    }
+  }
+}
+
 #app {
-  border-image-source: var(--gui-bg);
   display: inline-flex;
+  min-width: 33rem;
   flex-direction: column;
   padding: 1rem;
+  border-image-source: var(--gui-bg);
   border-image-slice: 4 fill;
   border-image-repeat: stretch;
   border-image-width: calc(var(--ui-scale) * 4px);

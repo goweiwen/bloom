@@ -3,12 +3,17 @@ mod components;
 use crate::bannerfont::{Banner, WritingDirection};
 use crate::components::{Keyboard, Writing};
 use dioxus::prelude::*;
+use dioxus::router::RouterConfig;
+
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
 enum Route {
     #[route("/")]
     Home {},
+    #[route("/settings")]
+    Settings {},
 }
+
 const FAVICON: Asset = asset!("/assets/favicon.png",);
 const MAIN_CSS: Asset = asset!(
     "/assets/main.css",
@@ -20,6 +25,9 @@ const GUI_BG: Asset = asset!("/assets/ui/gui_bg.png");
 const BUTTON: Asset = asset!("/assets/ui/button.png");
 const ICON_BANNER: Asset = asset!("/assets/ui/icon_banner.png");
 const ICON_DYE: Asset = asset!("/assets/ui/icon_dye.png");
+const TAB_ACTIVE: Asset = asset!("/assets/ui/tab_active.png");
+const TAB_INACTIVE: Asset = asset!("/assets/ui/tab_inactive.png");
+
 fn main() {
     dioxus::launch(App);
 }
@@ -37,9 +45,11 @@ fn App() -> Element {
     --button-bg: url('{BUTTON}');
     --icon-banner: url('{ICON_BANNER}');
     --icon-dye: url('{ICON_DYE}');
+    --tab-active: url('{TAB_ACTIVE}');
+    --tab-inactive: url('{TAB_INACTIVE}');
 }}
             "# }
-        div { id: "app", Router::<Route> {} }
+        Router::<Route> {}
     }
 }
 
@@ -54,8 +64,36 @@ fn Home() -> Element {
         Banner::try_from_code("b10ss2bri10cbo2bo15").unwrap(),
     ];
     rsx! {
-        Writing { banners: writing, direction: WritingDirection::RightToLeft }
-        button { class: "widget-button", "test" }
-        Keyboard {}
+        NavBar {}
+        main { id: "app",
+            Writing { banners: writing, direction: WritingDirection::RightToLeft }
+            button { class: "widget-button", "test" }
+            Keyboard {}
+        }
+    }
+}
+
+/// Settings
+#[component]
+fn Settings() -> Element {
+    rsx! {
+        NavBar {}
+        main { id: "app" }
+    }
+}
+
+#[component]
+fn NavBar() -> Element {
+    let link = |route, name| {
+        rsx! {
+            Link { to: route, active_class: "active", {name} }
+        }
+    };
+    rsx! {
+        nav { id: "nav",
+            {link(Route::Home {}, "Bloom")}
+            {link(Route::Settings {}, "Settings")}
+        }
+        Outlet::<Route> {}
     }
 }
