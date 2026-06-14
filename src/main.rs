@@ -3,8 +3,7 @@ mod components;
 mod sound;
 
 use crate::bannerfont::{Banner, WritingDirection};
-use crate::components::{Keyboard, Writing};
-use crate::sound::Sound;
+use crate::components::{Keyboard, WidgetButton, Writing};
 use dioxus::prelude::*;
 
 #[derive(Debug, Clone, Routable, PartialEq)]
@@ -70,11 +69,7 @@ fn Home() -> Element {
         NavBar {}
         main { id: "app",
             Writing { banners: writing, direction: WritingDirection::RightToLeft }
-            button {
-                class: "widget-button",
-                onmousedown: move |_| Sound::Click.play(),
-                "test"
-            }
+            WidgetButton { "test" }
             Keyboard {}
         }
     }
