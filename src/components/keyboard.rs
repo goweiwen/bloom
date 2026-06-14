@@ -32,9 +32,8 @@ fn Colors(color: WriteSignal<Color>) -> Element {
                     button {
                         class: "color",
                         style: style(c),
-                        onclick: move |_| {
-                            color.set(c);
-                        },
+                        onmousedown: move |_| crate::sound::play_select_pattern(),
+                        onclick: move |_| color.set(c),
                     }
                 }
             }
@@ -51,8 +50,14 @@ fn NewBanner(color: ReadSignal<Color>) -> Element {
         rgb.0, rgb.1, rgb.2,
     );
     rsx! {
-        Tooltip { text: format!("New {} Banner", color.name()), style: "grid-column: 9 / span 2",
-            button { class: "new-banner", style }
+        Tooltip {
+            text: format!("New {} Banner", color.name()),
+            style: "grid-column: 9 / span 2",
+            button {
+                class: "new-banner",
+                style,
+                onmousedown: move |_| crate::sound::play_select_pattern(),
+            }
         }
     }
 }
@@ -71,6 +76,7 @@ fn Patterns(color: ReadSignal<Color>) -> Element {
                         style: "grid-column: {x+1}; grid-row: {y+1}; --bg-color: rgb({bg_color.0}, {bg_color.1}, {bg_color.2})",
                         button {
                             class: "pattern",
+                            onmousedown: move |_| crate::sound::play_select_pattern(),
                             BannerLayer { layer: Layer::new(*pattern, color) }
                         }
                     }
