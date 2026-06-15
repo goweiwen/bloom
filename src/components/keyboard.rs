@@ -10,7 +10,7 @@ pub fn Keyboard(banners: Signal<Vec<Banner>>) -> Element {
     let color = use_signal(|| Color::White);
     rsx! {
         div { class: "keyboard",
-            Colors { color }
+            Colors { color, banners }
             NewBanner { color, banners }
             CopyButton { banners }
             Patterns { color, banners }
@@ -39,7 +39,7 @@ fn CopyButton(banners: ReadSignal<Vec<Banner>>) -> Element {
 }
 
 #[component]
-fn Colors(color: WriteSignal<Color>) -> Element {
+fn Colors(mut color: Signal<Color>, banners: WriteSignal<Vec<Banner>>) -> Element {
     fn style(color: Color) -> String {
         let color = color.rgb();
         format!(
@@ -47,6 +47,9 @@ fn Colors(color: WriteSignal<Color>) -> Element {
             color.0, color.1, color.2,
         )
     }
+
+    let mut prev_color = use_signal(&*color);
+
     rsx! {
         div { class: "colors",
             for c in Color::iter() {
@@ -54,8 +57,21 @@ fn Colors(color: WriteSignal<Color>) -> Element {
                     button {
                         class: "color",
                         style: style(c),
-                        onmousedown: move |_| Sound::SelectPattern.play(),
+                        onmousedown: move |event: Event<MouseData>| {
+                            Sound::SelectPattern.play();
+                            let detail = event
+                                .downcast::<web_sys::MouseEvent>()
+                                .map_or(1, |e| e.detail());
+                            if detail <= 1 {
+                                prev_color.set(color());
+                            }
+                        },
                         onclick: move |_| color.set(c),
+                        ondoubleclick: move |_| {
+                            Sound::TakeResult.play();
+                            banners.write().push(Banner::new(vec![Layer::new(Pattern::Base, c)]));
+                            color.set(prev_color());
+                        },
                     }
                 }
             }
