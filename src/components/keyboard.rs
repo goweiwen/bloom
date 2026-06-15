@@ -6,13 +6,13 @@ use dioxus::prelude::*;
 use strum::IntoEnumIterator;
 
 #[component]
-pub fn Keyboard() -> Element {
+pub fn Keyboard(banners: WriteSignal<Vec<Banner>>) -> Element {
     let color = use_signal(|| Color::White);
     rsx! {
         div { class: "keyboard",
             Colors { color }
-            NewBanner { color }
-            Patterns { color }
+            NewBanner { color, banners }
+            Patterns { color, banners }
         }
     }
 }
@@ -43,7 +43,7 @@ fn Colors(color: WriteSignal<Color>) -> Element {
 }
 
 #[component]
-fn NewBanner(color: ReadSignal<Color>) -> Element {
+fn NewBanner(color: ReadSignal<Color>, banners: WriteSignal<Vec<Banner>>) -> Element {
     let color = color.read().to_owned();
     let rgb = color.rgb();
     let style = format!(
@@ -58,27 +58,36 @@ fn NewBanner(color: ReadSignal<Color>) -> Element {
                 class: "new-banner",
                 style,
                 onmousedown: move |_| Sound::TakeResult.play(),
+                onclick: move |_| banners.write().push(Banner::new(vec![Layer::new(Pattern::Base, color)])),
             }
         }
     }
 }
 
 #[component]
-fn Patterns(color: ReadSignal<Color>) -> Element {
+fn Patterns(color: ReadSignal<Color>, banners: WriteSignal<Vec<Banner>>) -> Element {
     let color = color.read().to_owned();
     let bg_color = bg_color_rgb(color);
     let layout = keyboard_layout();
     rsx! {
         div { class: "patterns",
-            for (y, row) in layout.iter().enumerate() {
-                for (x, (key, pattern)) in row.iter().enumerate() {
+            for (y, row) in layout.into_iter().enumerate() {
+                for (x, (_key, pattern)) in row.into_iter().enumerate() {
                     Tooltip {
                         text: pattern.name(),
                         style: "grid-column: {x+1}; grid-row: {y+1}; --bg-color: rgb({bg_color.0}, {bg_color.1}, {bg_color.2})",
                         button {
                             class: "pattern",
                             onmousedown: move |_| Sound::SelectPattern.play(),
-                            BannerView { banner: Banner::new(vec![Layer::new(*pattern, color)]) }
+                            onclick: move |_| {
+                                let layer = Layer::new(pattern, color);
+                                let mut banners = banners.write();
+                                match banners.last_mut() {
+                                    Some(banner) => banner.layers.push(layer),
+                                    None => banners.push(Banner::new(vec![layer])),
+                                }
+                            },
+                            BannerView { banner: Banner::new(vec![Layer::new(pattern, color)]) }
                         }
                     }
                 }

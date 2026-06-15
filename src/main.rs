@@ -68,18 +68,12 @@ fn App() -> Element {
 #[component]
 fn Home() -> Element {
     let settings = use_context::<SettingsState>();
-    let writing = vec![
-        Banner::try_from_code("b10").unwrap(),
-        Banner::try_from_code("b10ss2").unwrap(),
-        Banner::try_from_code("b10ss2bri10").unwrap(),
-        Banner::try_from_code("b10ss2bri10cbo2").unwrap(),
-        Banner::try_from_code("b10ss2bri10cbo2bo15").unwrap(),
-    ];
+    let banners = use_signal(Vec::<Banner>::new);
     rsx! {
         NavBar {}
         main { id: "app",
-            Writing { banners: writing, direction: (settings.banner_direction)() }
-            Keyboard {}
+            Writing { banners: banners(), direction: (settings.banner_direction)() }
+            Keyboard { banners }
         }
     }
 }

@@ -234,6 +234,7 @@ button.widget-button {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
+  margin-bottom: 0.5rem;
 
   &.ltr {
     flex-direction: row;
