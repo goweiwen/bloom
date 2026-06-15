@@ -52,6 +52,17 @@ pub enum Pattern {
 }
 
 impl Pattern {
+    /// Pattern index in the banner font's BCD encoding
+    pub const fn bcd(self) -> u8 {
+        match self as u8 {
+            0 => 0,
+            ord => {
+                let i = ord - 1;
+                ((i / 10) << 4) | (i % 10 + 1)
+            }
+        }
+    }
+
     pub fn name(self) -> &'static str {
         use Pattern::*;
         match self {

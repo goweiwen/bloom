@@ -30,6 +30,8 @@ const BUTTON: Asset = asset!("/assets/ui/button.png");
 const BUTTON_DISABLED: Asset = asset!("/assets/ui/button_disabled.png");
 const ICON_BANNER: Asset = asset!("/assets/ui/icon_banner.png");
 const ICON_DYE: Asset = asset!("/assets/ui/icon_dye.png");
+const ICON_IMPORT: Asset = asset!("/assets/ui/icon_import.png");
+const ICON_EXPORT: Asset = asset!("/assets/ui/icon_export.png");
 const TAB_ACTIVE: Asset = asset!("/assets/ui/tab_active.png");
 const TAB_INACTIVE: Asset = asset!("/assets/ui/tab_inactive.png");
 const TOOLTIP: Asset = asset!("/assets/ui/tooltip.png");
@@ -54,6 +56,8 @@ fn App() -> Element {
     --button-disabled-bg: url('{BUTTON_DISABLED}');
     --icon-banner: url('{ICON_BANNER}');
     --icon-dye: url('{ICON_DYE}');
+    --icon-import: url('{ICON_IMPORT}');
+    --icon-export: url('{ICON_EXPORT}');
     --tab-active: url('{TAB_ACTIVE}');
     --tab-inactive: url('{TAB_INACTIVE}');
     --tooltip: url('{TOOLTIP}');

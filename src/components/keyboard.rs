@@ -1,4 +1,4 @@
-use crate::bannerfont::{Banner, Color, Layer, Pattern};
+use crate::bannerfont::{Banner, Color, Layer, Optimized, Pattern};
 use crate::components::{BannerView, Tooltip};
 use crate::sound::Sound;
 
@@ -6,13 +6,34 @@ use dioxus::prelude::*;
 use strum::IntoEnumIterator;
 
 #[component]
-pub fn Keyboard(banners: WriteSignal<Vec<Banner>>) -> Element {
+pub fn Keyboard(banners: Signal<Vec<Banner>>) -> Element {
     let color = use_signal(|| Color::White);
     rsx! {
         div { class: "keyboard",
             Colors { color }
             NewBanner { color, banners }
+            CopyButton { banners }
             Patterns { color, banners }
+        }
+    }
+}
+
+#[component]
+fn CopyButton(banners: ReadSignal<Vec<Banner>>) -> Element {
+    rsx! {
+        Tooltip { text: "Copy", style: "grid-column: 11 / span 2",
+            button {
+                class: "copy",
+                style: "background-image: var(--icon-export)",
+                onmousedown: move |_| Sound::Click.play(),
+                onclick: move |_| {
+                    let banners = banners.read();
+                    let text = &Optimized(&banners).to_string();
+                    if let Some(window) = web_sys::window() {
+                        let _ = window.navigator().clipboard().write_text(text);
+                    }
+                },
+            }
         }
     }
 }

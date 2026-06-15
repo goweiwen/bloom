@@ -170,6 +170,14 @@ button.widget-button {
     background-blend-mode: difference;
   }
 
+  .copy {
+    display: flex;
+    background-color: white;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+  }
+
   .patterns {
     grid-column: 1 / span 12;
     display: grid;
