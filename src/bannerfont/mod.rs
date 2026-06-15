@@ -104,6 +104,7 @@ impl Banner {
 pub struct Optimized<'a>(pub &'a [Banner]);
 
 /// One emitted glyph of an [`Optimized`] string.
+#[derive(Clone, Copy)]
 enum Glyph {
     Layer(Layer),
     /// Horizontal cursor move of `offset` banner widths (negative = backwards).
@@ -181,7 +182,15 @@ impl Optimized<'_> {
             glyphs.push(Glyph::Space((n - cursor) as i32));
         }
 
-        glyphs
+        let mut flattened: Vec<Glyph> = Vec::with_capacity(glyphs.len());
+        for glyph in glyphs {
+            match (flattened.last_mut(), glyph) {
+                (Some(Glyph::Space(prev)), Glyph::Space(offset)) => *prev += offset,
+                (Some(prev @ Glyph::Space(0)), glyph) => *prev = glyph,
+                (_, glyph) => flattened.push(glyph),
+            }
+        }
+        flattened
     }
 }
 
@@ -220,16 +229,54 @@ impl WritingDirection {
         }
     }
 }
+
+#[cfg(test)]
 mod tests {
     use super::*;
+    use Color::*;
+    use Pattern::*;
+    use test_case::test_case;
 
-    const NETHER_PORTAL: &str = "b10ss2bri10cbo2bo15";
+    fn banner(layers: &[(Pattern, Color)]) -> Banner {
+        Banner::new(layers.iter().map(|&(p, c)| Layer::new(p, c)).collect())
+    }
 
     #[test]
     fn test_banner_code() {
-        let code = NETHER_PORTAL;
+        let code = "b10ss2bri10cbo2bo15";
         let banner = Banner::try_from_code(code).unwrap();
-        let new_code = banner.code();
-        assert_eq!(code, new_code);
+        assert_eq!(code, banner.code());
+    }
+
+    #[test_case(vec![] => ""; "empty")]
+    #[test_case(vec![banner(&[(Base, White)])] => "\u{E000}"; "single base")]
+    #[test_case(vec![banner(&[(Base, White), (Flower, Black)])] => "\u{E000}\u{F03F}\u{E311}"; "overlay backtracks one width")]
+    #[test_case(vec![banner(&[(Base, White)]), banner(&[(Base, Red)])] => "\u{E000}\u{E600}"; "multiple bases")]
+    #[test_case(
+        vec![
+            banner(&[(Base, Green)]),
+            banner(&[(Base, Green)]),
+            banner(&[(Base, White), (StripeCenter, Orange)]),
+        ] => "\u{E900}\u{E900}\u{E000}\u{F03F}\u{E52A}";
+        "flattens consecutive spaces"
+    )]
+    fn test_optimized_display(banners: Vec<Banner>) -> String {
+        Optimized(&banners).to_string()
+    }
+
+    #[test]
+    fn test_optimized_alternate_display() {
+        let banners = [
+            banner(&[(Base, Green)]),
+            banner(&[(Base, Green)]),
+            banner(&[(Base, White), (StripeCenter, Orange)]),
+        ];
+        let expected = "\
+U+E900  Green Base
+U+E900  Green Base
+U+E000  White Base
+U+F03F  space: -1
+U+E52A  Orange Pale";
+        assert_eq!(format!("{:#}", Optimized(&banners)), expected);
     }
 }
