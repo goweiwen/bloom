@@ -98,47 +98,107 @@ impl Banner {
 
 /// Renders a row of banners as the optimized banner-font string for Minecraft: every banner's first
 /// layer, and each layer overlaid in place using negative-space chars to move the cursor back.
+///
+/// The alternate form (`{:#}`) instead lists every emitted character with its codepoint and meaning.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Optimized<'a>(pub &'a [Banner]);
 
-impl fmt::Display for Optimized<'_> {
+/// One emitted glyph of an [`Optimized`] string.
+enum Glyph {
+    Layer(Layer),
+    /// Horizontal cursor move of `offset` banner widths (negative = backwards).
+    Space(i32),
+}
+
+impl Glyph {
+    fn char(&self) -> char {
+        match *self {
+            Glyph::Layer(layer) => layer.bannerfont_char(),
+            Glyph::Space(offset) => bannerfont_space_char(offset),
+        }
+    }
+}
+
+impl fmt::Display for Glyph {
+    /// Writes the font char, or under `{:#}` a `U+XXXX  meaning` explanation.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if !f.alternate() {
+            return f.write_char(self.char());
+        }
+
+        let code = self.char() as u32;
+        match self {
+            Glyph::Layer(layer) => {
+                write!(
+                    f,
+                    "U+{code:04X}  {} {}",
+                    layer.color.name(),
+                    layer.pattern.name()
+                )
+            }
+            Glyph::Space(offset) => write!(f, "U+{code:04X}  space: {offset}"),
+        }
+    }
+}
+
+impl Optimized<'_> {
+    /// The ordered glyphs that make up the rendered string.
+    fn glyphs(&self) -> Vec<Glyph> {
         let banners = self.0;
         let n = banners.len();
+        let mut glyphs = Vec::new();
         if n == 0 {
-            return Ok(());
+            return glyphs;
         }
 
         let max_layers = banners.iter().map(|b| b.layers.len()).max().unwrap_or(0);
 
-        banners.iter().try_for_each(|b| {
-            f.write_char(
-                b.layers
-                    .first()
-                    .map_or(bannerfont_space_char(1), |l| l.bannerfont_char()),
-            )
-        })?;
+        // Background row: each banner's first layer, or positive space if it has none.
+        glyphs.extend(banners.iter().map(|b| match b.layers.first() {
+            Some(&layer) => Glyph::Layer(layer),
+            None => Glyph::Space(1),
+        }));
 
-        let cursor = (1..max_layers).try_fold(n, |cursor, depth| {
+        let mut cursor = n;
+        for depth in 1..max_layers {
             let last_idx = banners
                 .iter()
                 .rposition(|b| b.layers.len() > depth)
                 .unwrap();
-            f.write_char(bannerfont_space_char(-(cursor as i32)))?;
-            banners[..=last_idx].iter().try_for_each(|b| {
-                f.write_char(
-                    b.layers
-                        .get(depth)
-                        .map_or(bannerfont_space_char(1), |l| l.bannerfont_char()),
-                )
-            })?;
-            Ok(last_idx + 1)
-        })?;
-
-        if cursor < n {
-            f.write_char(bannerfont_space_char((n - cursor) as i32))?;
+            glyphs.push(Glyph::Space(-(cursor as i32)));
+            glyphs.extend(
+                banners[..=last_idx]
+                    .iter()
+                    .map(|b| match b.layers.get(depth) {
+                        Some(&layer) => Glyph::Layer(layer),
+                        None => Glyph::Space(1),
+                    }),
+            );
+            cursor = last_idx + 1;
         }
 
+        if cursor < n {
+            glyphs.push(Glyph::Space((n - cursor) as i32));
+        }
+
+        glyphs
+    }
+}
+
+impl fmt::Display for Optimized<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let glyphs = self.glyphs();
+
+        if !f.alternate() {
+            return glyphs.iter().try_for_each(|g| write!(f, "{g}"));
+        }
+
+        for (i, glyph) in glyphs.iter().enumerate() {
+            if i > 0 {
+                f.write_char('\n')?;
+            }
+            write!(f, "{glyph:#}")?;
+        }
         Ok(())
     }
 }
