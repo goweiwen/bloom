@@ -27,7 +27,7 @@ pub fn Data() -> Element {
                     },
                     Some(rows) => rsx! {
                         for row in rows.iter() {
-                            if let Ok(banner) = Banner::try_from_code(&row.code) {
+                            if let Ok(banner) = row.code.parse::<Banner>() {
                                 div { class: "data-row",
                                     BannerView { banner }
                                     span { class: "data-code", "{row.code}" }

@@ -3,7 +3,6 @@ mod banner_font;
 mod color;
 mod pattern;
 
-pub use banner_code::BannerCode;
 pub use banner_font::OptimizedBannerFont;
 pub use color::Color;
 pub use pattern::Pattern;
@@ -54,44 +53,29 @@ impl Banner {
             None
         }
     }
+}
 
-    pub fn try_from_code(mut code: &str) -> Result<Self, Error> {
-        let mut layers = Vec::new();
-
-        while !code.is_empty() {
-            let pattern_end = code
-                .find(|c: char| !c.is_ascii_lowercase())
-                .unwrap_or(code.len());
-            let pattern = &code[..pattern_end];
-            if pattern.is_empty() {
-                return Err(Error::UnexpectedEndOfCode);
-            }
-            let pattern = Pattern::try_from_code(pattern)?;
-            code = &code[pattern_end..];
-
-            let color_end = code
-                .find(|c: char| !c.is_ascii_digit())
-                .unwrap_or(code.len());
-            let color = &code[..color_end];
-            if color.is_empty() {
-                return Err(Error::UnexpectedEndOfCode);
-            }
-            let color = Color::try_from_code(color)?;
-            code = &code[color_end..];
-
-            layers.push(Layer::new(pattern, color));
-        }
-
-        Ok(Self::new(layers))
+/// The compact binary encoding of a banner: two bytes per layer — the pattern's
+/// discriminant followed by the color's. Stored in IndexedDB as a `Uint8Array`;
+/// the inverse is [`TryFrom<&[u8]>`](Banner).
+impl From<&Banner> for Vec<u8> {
+    fn from(banner: &Banner) -> Vec<u8> {
+        banner
+            .layers
+            .iter()
+            .flat_map(|layer| [layer.pattern as u8, layer.color as u8])
+            .collect()
     }
+}
 
-    /// Parse the compact binary encoding produced by [`BannerBytes`]: two bytes
-    /// per layer, the pattern's discriminant then the color's.
-    pub fn try_from_bytes(bytes: &[u8]) -> Result<Self, Error> {
-        if bytes.len() % 2 != 0 {
+impl TryFrom<&[u8]> for Banner {
+    type Error = Error;
+
+    fn try_from(bytes: &[u8]) -> Result<Self, Error> {
+        if !bytes.len().is_multiple_of(2) {
             return Err(Error::UnexpectedEndOfCode);
         }
-        bytes
+        let layers = bytes
             .chunks_exact(2)
             .map(|pair| {
                 let pattern = Pattern::try_from(pair[0])
@@ -100,8 +84,9 @@ impl Banner {
                     .map_err(|_| Error::InvalidColor(pair[1].to_string()))?;
                 Ok(Layer::new(pattern, color))
             })
-            .collect::<Result<Vec<_>, _>>()
-            .map(Self::new)
+            .collect::<Result<Vec<_>, Error>>()?;
+
+        Ok(Banner::new(layers))
     }
 }
 
@@ -120,5 +105,33 @@ impl WritingDirection {
             WritingDirection::LeftToRight => "ltr",
             WritingDirection::RightToLeft => "rtl",
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn banner_bytes_roundtrips() {
+        let banner = Banner::new(vec![
+            Layer::new(Pattern::Base, Color::White),
+            Layer::new(Pattern::Creeper, Color::Black),
+            Layer::new(Pattern::Guster, Color::Purple),
+        ]);
+        let bytes = Vec::<u8>::from(&banner);
+        assert_eq!(bytes, vec![0, 0, 4, 3, 42, 15]);
+        assert_eq!(Banner::try_from(bytes.as_slice()).unwrap(), banner);
+    }
+
+    #[test]
+    fn banner_bytes_rejects_odd_length() {
+        assert!(Banner::try_from([0, 0, 4].as_slice()).is_err());
+    }
+
+    #[test]
+    fn banner_bytes_rejects_out_of_range() {
+        assert!(Banner::try_from([43, 0].as_slice()).is_err());
+        assert!(Banner::try_from([0, 16].as_slice()).is_err());
     }
 }
