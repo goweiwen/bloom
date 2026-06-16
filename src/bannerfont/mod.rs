@@ -1,8 +1,10 @@
+mod banner_code;
 mod color;
 mod pattern;
 
 use std::fmt::{self, Write};
 
+pub use banner_code::BannerCode;
 pub use color::Color;
 pub use pattern::Pattern;
 
@@ -56,13 +58,6 @@ impl Banner {
         } else {
             None
         }
-    }
-
-    pub fn code(&self) -> String {
-        self.layers
-            .iter()
-            .flat_map(|layer| [layer.pattern.code(), layer.color.code()])
-            .collect()
     }
 
     pub fn try_from_code(mut code: &str) -> Result<Self, Error> {
@@ -239,13 +234,6 @@ mod tests {
 
     fn banner(layers: &[(Pattern, Color)]) -> Banner {
         Banner::new(layers.iter().map(|&(p, c)| Layer::new(p, c)).collect())
-    }
-
-    #[test]
-    fn test_banner_code() {
-        let code = "b10ss2bri10cbo2bo15";
-        let banner = Banner::try_from_code(code).unwrap();
-        assert_eq!(code, banner.code());
     }
 
     #[test_case(vec![] => ""; "empty")]

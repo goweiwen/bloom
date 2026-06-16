@@ -57,7 +57,7 @@ pub struct Settings {
 }
 
 /// A row in the `banners` store: a banner's usage stats, keyed in-line by its
-/// [`code`](crate::bannerfont::Banner::code) (a lossless representation of the
+/// [`BannerCode`](crate::bannerfont::BannerCode) (a lossless representation of the
 /// banner). `count` is how many times it was made; `last_used` is a Unix-seconds
 /// timestamp for frecency ranking.
 #[derive(Serialize, Deserialize, Clone)]
