@@ -1,4 +1,4 @@
-use crate::bannerfont::{Banner, Color, Layer, Optimized, Pattern};
+use crate::bannerfont::{Banner, Color, Layer, OptimizedBannerFont, Pattern};
 use crate::components::{BannerView, Tooltip};
 use crate::sound::Sound;
 
@@ -28,7 +28,7 @@ fn CopyButton(banners: ReadSignal<Vec<Banner>>) -> Element {
                 onmousedown: move |_| Sound::Click.play(),
                 onclick: move |_| {
                     let banners = banners.read();
-                    let text = &Optimized(&banners).to_string();
+                    let text = &OptimizedBannerFont(&banners).to_string();
                     if let Some(window) = web_sys::window() {
                         let _ = window.navigator().clipboard().write_text(text);
                     }
