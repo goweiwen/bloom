@@ -167,7 +167,6 @@ button.widget-button {
     background-repeat: no-repeat;
     background-size: calc(var(--ui-scale) * 16px);
     background-position: center;
-    background-blend-mode: difference;
   }
 
   .copy {
@@ -202,7 +201,6 @@ button.widget-button {
     background-repeat: no-repeat;
     background-size: calc(var(--ui-scale) * 16px);
     background-position: center;
-    background-blend-mode: difference;
 
     &:hover {
       border-color: white;
@@ -210,6 +208,7 @@ button.widget-button {
 
     &.color {
       aspect-ratio: 1;
+      background-blend-mode: difference;
 
       div {
         position: absolute;
