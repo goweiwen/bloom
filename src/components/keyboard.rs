@@ -69,7 +69,11 @@ fn Colors(mut color: Signal<Color>, banners: WriteSignal<Vec<Banner>>) -> Elemen
                         onclick: move |_| color.set(c),
                         ondoubleclick: move |_| {
                             Sound::TakeResult.play();
-                            banners.write().push(Banner::new(vec![Layer::new(Pattern::Base, c)]));
+                            let mut banners = banners.write();
+                            if let Some(current) = banners.last() {
+                                crate::state::record_banner(current);
+                            }
+                            banners.push(Banner::new(vec![Layer::new(Pattern::Base, c)]));
                             color.set(prev_color());
                         },
                     }
@@ -95,7 +99,13 @@ fn NewBanner(color: ReadSignal<Color>, banners: WriteSignal<Vec<Banner>>) -> Ele
                 class: "new-banner",
                 style,
                 onmousedown: move |_| Sound::TakeResult.play(),
-                onclick: move |_| banners.write().push(Banner::new(vec![Layer::new(Pattern::Base, color)])),
+                onclick: move |_| {
+                    let mut banners = banners.write();
+                    if let Some(current) = banners.last() {
+                        crate::state::record_banner(current);
+                    }
+                    banners.push(Banner::new(vec![Layer::new(Pattern::Base, color)]));
+                },
             }
         }
     }

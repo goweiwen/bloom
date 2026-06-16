@@ -10,8 +10,9 @@ use crate::bannerfont::WritingDirection;
 const DB_NAME: &str = "bloom";
 /// Schema version. Bump when adding/removing object stores; existing stores are
 /// preserved on upgrade.
-const DB_VERSION: u32 = 1;
+const DB_VERSION: u32 = 2;
 const STORE_SETTINGS: &str = "settings";
+const STORE_BANNERS: &str = "banners";
 /// Out-of-line key under which the single settings record is stored.
 const SETTINGS_KEY: &str = "app";
 
@@ -55,11 +56,23 @@ pub struct Settings {
     pub volume: f64,
 }
 
-/// Open the database, creating the settings store on first run or upgrade.
+/// A row in the `banners` store: a banner's usage stats, keyed in-line by its
+/// [`code`](crate::bannerfont::Banner::code) (a lossless representation of the
+/// banner). `count` is how many times it was made; `last_used` is a Unix-seconds
+/// timestamp for frecency ranking.
+#[derive(Serialize, Deserialize, Clone)]
+pub struct BannerRow {
+    pub code: String,
+    pub count: u32,
+    pub last_used: i64,
+}
+
+/// Open the database, creating any missing object stores on first run or upgrade.
 pub async fn open() -> Result<Rexie> {
     let rexie = Rexie::builder(DB_NAME)
         .version(DB_VERSION)
         .add_object_store(ObjectStore::new(STORE_SETTINGS))
+        .add_object_store(ObjectStore::new(STORE_BANNERS).key_path("code"))
         .build()
         .await?;
     Ok(rexie)
@@ -84,6 +97,30 @@ pub async fn save_settings(rexie: &Rexie, settings: &Settings) -> Result<()> {
     let value = serde_wasm_bindgen::to_value(settings)?;
     store
         .put(&value, Some(&JsValue::from_str(SETTINGS_KEY)))
+        .await?;
+    tx.done().await?;
+    Ok(())
+}
+
+/// Record one use of `code`: increment its `count` (starting from 1 for a new
+/// banner) and set `last_used` to `now`. The store is keyed in-line on `code`,
+/// so repeats upsert the same row.
+pub async fn record_banner(rexie: &Rexie, code: &str, now: i64) -> Result<()> {
+    let tx = rexie.transaction(&[STORE_BANNERS], TransactionMode::ReadWrite)?;
+    let store = tx.store(STORE_BANNERS)?;
+
+    let count = match store.get(JsValue::from_str(code)).await? {
+        Some(value) => serde_wasm_bindgen::from_value::<BannerRow>(value)?.count + 1,
+        None => 1,
+    };
+
+    let row = BannerRow {
+        code: code.to_string(),
+        count,
+        last_used: now,
+    };
+    store
+        .put(&serde_wasm_bindgen::to_value(&row)?, None)
         .await?;
     tx.done().await?;
     Ok(())
