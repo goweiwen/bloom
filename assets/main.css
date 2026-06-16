@@ -237,6 +237,36 @@ button.widget-button {
   height: 5rem;
 }
 
+.data {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ui-scale) * 4px);
+
+  .data-empty {
+    text-align: center;
+  }
+
+  .data-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .banner {
+      width: calc(var(--ui-scale) * 16px);
+      height: calc(var(--ui-scale) * 32px);
+    }
+
+    .data-code {
+      flex: 1;
+      overflow-wrap: anywhere;
+    }
+
+    .data-count {
+      margin-left: auto;
+    }
+  }
+}
+
 .writing {
   display: flex;
   flex-wrap: wrap;

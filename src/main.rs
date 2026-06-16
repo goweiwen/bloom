@@ -5,7 +5,7 @@ mod sound;
 mod state;
 
 use crate::bannerfont::Banner;
-use crate::components::{Keyboard, Settings, Writing};
+use crate::components::{Data, Keyboard, Settings, Writing};
 use crate::state::Settings as SettingsState;
 use dioxus::prelude::*;
 
@@ -14,6 +14,8 @@ use dioxus::prelude::*;
 enum Route {
     #[route("/")]
     Home {},
+    #[route("/data")]
+    Data {},
     #[route("/settings")]
     Settings {},
 }
@@ -92,6 +94,7 @@ pub(crate) fn NavBar() -> Element {
     rsx! {
         nav { id: "nav",
             {link(Route::Home {}, "Bloom")}
+            {link(Route::Data {}, "Data")}
             {link(Route::Settings {}, "Settings")}
         }
         Outlet::<Route> {}

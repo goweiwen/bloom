@@ -1,4 +1,5 @@
 mod banner;
+mod data;
 mod keyboard;
 mod settings;
 mod tooltip;
@@ -7,6 +8,7 @@ mod widget_slider;
 mod writing;
 
 pub use banner::BannerView;
+pub use data::Data;
 pub use keyboard::Keyboard;
 pub use settings::Settings;
 pub use tooltip::Tooltip;

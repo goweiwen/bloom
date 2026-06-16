@@ -102,6 +102,21 @@ pub async fn save_settings(rexie: &Rexie, settings: &Settings) -> Result<()> {
     Ok(())
 }
 
+/// Load every recorded banner, ordered by `count` descending (most-used first).
+pub async fn all_banners(rexie: &Rexie) -> Result<Vec<BannerRow>> {
+    let tx = rexie.transaction(&[STORE_BANNERS], TransactionMode::ReadOnly)?;
+    let store = tx.store(STORE_BANNERS)?;
+    let values = store.get_all(None, None).await?;
+    tx.done().await?;
+
+    let mut rows = values
+        .into_iter()
+        .map(serde_wasm_bindgen::from_value::<BannerRow>)
+        .collect::<std::result::Result<Vec<_>, _>>()?;
+    rows.sort_by_key(|x| -(x.count as isize));
+    Ok(rows)
+}
+
 /// Record one use of `code`: increment its `count` (starting from 1 for a new
 /// banner) and set `last_used` to `now`. The store is keyed in-line on `code`,
 /// so repeats upsert the same row.
