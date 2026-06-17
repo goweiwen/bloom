@@ -1,3 +1,0 @@
-
-[rustfmt]
-overrideCommand = ["sh", "-c", "dx fmt -f - | rustfmt --edition 2021"]
