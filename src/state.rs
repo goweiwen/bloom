@@ -1,19 +1,19 @@
 use dioxus::prelude::*;
 
-use crate::bannerfont::{Banner, BannerCode, WritingDirection};
+use crate::bannerfont::{Banner, WritingDirection};
 use crate::db;
 
 /// Record one use of `banner` in the frecency corpus, fire-and-forget: bump its
 /// count and refresh its timestamp. No-op for a banner with no layers.
 pub fn record_banner(banner: &Banner) {
-    let code = BannerCode(banner).to_string();
-    if code.is_empty() {
+    let bytes = Vec::<u8>::from(banner);
+    if bytes.is_empty() {
         return;
     }
     let now = (js_sys::Date::now() / 1000.0) as i64;
     spawn(async move {
         if let Ok(db) = db::open().await {
-            let _ = db::record_banner(&db, &code, now).await;
+            let _ = db::record_banner(&db, &bytes, now).await;
         }
     });
 }

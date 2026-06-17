@@ -1,6 +1,7 @@
 //! IndexedDB-backed storage for the settings singleton. This layer is pure
 //! storage; mapping to/from the app's global signals lives in [`crate::state`].
 
+use js_sys::Uint8Array;
 use rexie::{ObjectStore, Rexie, TransactionMode};
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::JsValue;
@@ -57,14 +58,56 @@ pub struct Settings {
 }
 
 /// A row in the `banners` store: a banner's usage stats, keyed in-line by its
-/// [`BannerCode`](crate::bannerfont::BannerCode) (a lossless representation of the
-/// banner). `count` is how many times it was made; `last_used` is a Unix-seconds
-/// timestamp for frecency ranking.
+/// [binary encoding](crate::bannerfont::Banner) (a `Uint8Array`, lossless). `count`
+/// is how many times it was made; `last_used` is a Unix-seconds timestamp for
+/// frecency ranking.
 #[derive(Serialize, Deserialize, Clone)]
 pub struct BannerRow {
-    pub code: String,
+    #[serde(with = "banner_bytes")]
+    pub bytes: Vec<u8>,
     pub count: u32,
     pub last_used: i64,
+}
+
+/// Serialize the `bytes` field as a JS `Uint8Array` (via `serialize_bytes`) rather
+/// than the default array-of-numbers, so it is stored as binary and usable as an
+/// in-line IndexedDB key.
+mod banner_bytes {
+    use serde::de::{self, Visitor};
+    use serde::{Deserializer, Serializer};
+    use std::fmt;
+
+    pub fn serialize<S: Serializer>(bytes: &[u8], serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.serialize_bytes(bytes)
+    }
+
+    pub fn deserialize<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<u8>, D::Error> {
+        struct BytesVisitor;
+        impl<'de> Visitor<'de> for BytesVisitor {
+            type Value = Vec<u8>;
+
+            fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                f.write_str("a byte array")
+            }
+
+            fn visit_bytes<E: de::Error>(self, v: &[u8]) -> Result<Self::Value, E> {
+                Ok(v.to_vec())
+            }
+
+            fn visit_byte_buf<E: de::Error>(self, v: Vec<u8>) -> Result<Self::Value, E> {
+                Ok(v)
+            }
+
+            fn visit_seq<A: de::SeqAccess<'de>>(self, mut seq: A) -> Result<Self::Value, A::Error> {
+                let mut bytes = Vec::new();
+                while let Some(b) = seq.next_element()? {
+                    bytes.push(b);
+                }
+                Ok(bytes)
+            }
+        }
+        deserializer.deserialize_byte_buf(BytesVisitor)
+    }
 }
 
 /// Open the database, creating any missing object stores on first run or upgrade.
@@ -72,7 +115,7 @@ pub async fn open() -> Result<Rexie> {
     let rexie = Rexie::builder(DB_NAME)
         .version(DB_VERSION)
         .add_object_store(ObjectStore::new(STORE_SETTINGS))
-        .add_object_store(ObjectStore::new(STORE_BANNERS).key_path("code"))
+        .add_object_store(ObjectStore::new(STORE_BANNERS).key_path("bytes"))
         .build()
         .await?;
     Ok(rexie)
@@ -117,20 +160,21 @@ pub async fn all_banners(rexie: &Rexie) -> Result<Vec<BannerRow>> {
     Ok(rows)
 }
 
-/// Record one use of `code`: increment its `count` (starting from 1 for a new
-/// banner) and set `last_used` to `now`. The store is keyed in-line on `code`,
-/// so repeats upsert the same row.
-pub async fn record_banner(rexie: &Rexie, code: &str, now: i64) -> Result<()> {
+/// Record one use of `bytes` (a banner's binary encoding): increment its `count`
+/// (starting from 1 for a new banner) and set `last_used` to `now`. The store is
+/// keyed in-line on `bytes`, so repeats upsert the same row.
+pub async fn record_banner(rexie: &Rexie, bytes: &[u8], now: i64) -> Result<()> {
     let tx = rexie.transaction(&[STORE_BANNERS], TransactionMode::ReadWrite)?;
     let store = tx.store(STORE_BANNERS)?;
 
-    let count = match store.get(JsValue::from_str(code)).await? {
+    let key = JsValue::from(Uint8Array::from(bytes));
+    let count = match store.get(key).await? {
         Some(value) => serde_wasm_bindgen::from_value::<BannerRow>(value)?.count + 1,
         None => 1,
     };
 
     let row = BannerRow {
-        code: code.to_string(),
+        bytes: bytes.to_vec(),
         count,
         last_used: now,
     };
