@@ -74,11 +74,19 @@ fn App() -> Element {
 #[component]
 fn Home() -> Element {
     let settings = use_context::<SettingsState>();
-    let banners = use_signal(Vec::<Banner>::new);
+    let mut banners = use_signal(Vec::<Banner>::new);
     rsx! {
         NavBar {}
         main { id: "app",
-            Writing { banners: banners(), direction: (settings.banner_direction)() }
+            Writing {
+                banners: banners(),
+                direction: (settings.banner_direction)(),
+                onreorder: move |(from, to)| {
+                    let mut banners = banners.write();
+                    let banner = banners.remove(from);
+                    banners.insert(to, banner);
+                },
+            }
             Keyboard { banners }
         }
     }

@@ -275,6 +275,14 @@ button.widget-button {
   &.rtl {
     flex-direction: row-reverse;
   }
+
+  .writing-item.draggable {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
 }
 
 .tooltip-container {

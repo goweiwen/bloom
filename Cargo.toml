@@ -24,6 +24,11 @@ web-sys = { version = "0.3.95", features = [
     "Clipboard",
     "MouseEvent",
     "UiEvent",
+    "DragEvent",
+    "Element",
+    "Node",
+    "NodeList",
+    "DomRect",
 ] }
 rexie = "0.6"
 serde = { version = "1", features = ["derive"] }
