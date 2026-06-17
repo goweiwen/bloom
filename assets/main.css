@@ -1,5 +1,5 @@
 :root {
-  --ui-scale: 2;
+  --ui-scale: 4;
   image-rendering: crisp-edges;
   font-size: calc(var(--ui-scale) * 8px);
   color: #404040;
@@ -239,30 +239,25 @@ button.widget-button {
 
 .data {
   display: flex;
-  flex-direction: column;
-  gap: calc(var(--ui-scale) * 4px);
+  flex-wrap: wrap;
+  gap: 0.25rem;
 
   .data-empty {
     text-align: center;
   }
 
-  .data-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  .item {
+    display: block;
+    position: relative;
+    aspect-ratio: 1;
 
-    .banner {
-      width: calc(var(--ui-scale) * 16px);
-      height: calc(var(--ui-scale) * 32px);
-    }
-
-    .data-code {
-      flex: 1;
-      overflow-wrap: anywhere;
-    }
-
-    .data-count {
-      margin-left: auto;
+    .count {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      color: white;
+      text-shadow: 0.125rem 0.125rem 0 #404040;
+      z-index: 1;
     }
   }
 }
@@ -308,3 +303,4 @@ button.widget-button {
     display: block;
   }
 }
+

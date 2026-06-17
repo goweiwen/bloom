@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::NavBar;
-use crate::bannerfont::{Banner, BannerCode};
+use crate::bannerfont::Banner;
 use crate::components::BannerView;
 use crate::db;
 
@@ -28,21 +28,22 @@ pub fn Data() -> Element {
                     Some(rows) => rsx! {
                         for row in rows.iter() {
                             if let Ok(banner) = Banner::try_from(row.bytes.as_slice()) {
-                                {
-                                    let code = BannerCode(&banner).to_string();
-                                    rsx! {
-                                        div { class: "data-row",
-                                            BannerView { banner }
-                                            span { class: "data-code", "{code}" }
-                                            span { class: "data-count", "×{row.count}" }
-                                        }
-                                    }
-                                }
+                                BannerCount { banner, count: row.count }
                             }
                         }
                     },
                 }
             }
+        }
+    }
+}
+
+#[component]
+pub fn BannerCount(banner: Banner, count: u32) -> Element {
+    rsx! {
+        div { class: "item",
+            BannerView { banner }
+            span { class: "count", "{count}" }
         }
     }
 }
